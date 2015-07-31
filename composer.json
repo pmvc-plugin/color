@@ -1,0 +1,17 @@
+{
+    "name": "pmvc-plugin/color",
+    "description": "color",
+    "type": "library",
+    "keywords": ["color", "pmvc", "plug-in"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hill",
+            "email": "hill@kimo.com"
+        }
+    ],
+    "require": {
+        "pmvc/pmvc": "*"
+    },
+    "minimum-stability": "dev"
+}
