@@ -3,6 +3,7 @@ namespace PMVC\PlugIn\color;
 
 class BaseColor
 {
+    const COLOR_ROUNDING_COEFF = 0x33; 
     private $r;
     private $g;
     private $b;
@@ -31,9 +32,10 @@ class BaseColor
     {
         $this->decrease($other);
         $other = $other->toArray();
-        $this->r = $this->r * $alpha + $other['r'];
-        $this->g = $this->g * $alpha + $other['g'];
-        $this->b = $this->b * $alpha + $other['b'];
+        $this->r = round($this->r * $alpha + $other['r']);
+        $this->g = round($this->g * $alpha + $other['g']);
+        $this->b = round($this->b * $alpha + $other['b']);
+        return $this;
     }
 
     function toHex()
@@ -52,6 +54,20 @@ class BaseColor
             ,'g'=>$this->g
             ,'b'=>$this->b
         );
+    }
+
+    function toString()
+    {
+        return join(',',$this->toArray());
+    }
+
+    function toRound()
+    {
+        $div = self::COLOR_ROUNDING_COEFF;
+        $this->r = round(round(($this->r / $div)) * $div);
+        $this->g = round(round(($this->g / $div)) * $div);
+        $this->b = round(round(($this->b / $div)) * $div);
+        return $this;
     }
 
     /**
