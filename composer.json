@@ -13,10 +13,5 @@
     "require": {
         "pmvc/pmvc": "*"
     },
-    "autoload": {
-        "psr-4": {
-            "PMVC\\PlugIn\\color\\": "./src"
-        }
-    },
     "minimum-stability": "dev"
 }

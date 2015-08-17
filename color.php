@@ -12,4 +12,10 @@ class color extends \PMVC\PlugIn
         \PMVC\l(__DIR__.'/src/ColorPalette.php');
         return ColorPalette::GenerateFromLocalImage($file);
     }
+
+    public function getColor()
+    {
+        $params = func_get_args();
+        return new BaseColor($params); 
+    }
 }
