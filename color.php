@@ -13,9 +13,8 @@ class color extends \PMVC\PlugIn
         return ColorPalette::GenerateFromLocalImage($file);
     }
 
-    public function getColor()
+    public function getColor($r=null, $g=null, $b=null)
     {
-        $params = func_get_args();
-        return new BaseColor($params); 
+        return new BaseColor($r,$g,$b); 
     }
 }
