@@ -1,6 +1,10 @@
 <?php
 namespace PMVC\PlugIn\color;
 
+use PMVC\PlugIn\image\ImageFile;
+use PMVC\PlugIn\image\ImageSize;
+use PMVC\PlugIn\image\Coord2D;
+
 /**
  * This class can be used to get the most common colors in an image, or to generate
  * a color palette from a set of images.  It handles a simple local cache of images.
@@ -21,56 +25,57 @@ class ColorPalette {
    * @param $filePath   the path to the local image file
    * @return an array keyed by hex color value, mapping to the frequency of use in the images
    */
-  static public function GenerateFromLocalImage($filePath) {
-    if( !file_exists($filePath)) {
-      throw new InvalidArgumentException("File not found (".$filePath.")");
-    }
+  static public function GenerateFromLocalImage(ImageFile $file) {
+    $pImage = \PMVC\plug('image');
 
     // resize the image for a reasonable amount of colors
-    $PREVIEW_WIDTH    = 150;
-    $PREVIEW_HEIGHT   = 150;
-    $size = GetImageSize($filePath);
+    $previewSize = new ImageSize(150, 150);
+    $srcSize = $file->getSize();
     $scale=1;
-    if ($size[0]>0){
-      $scale = min($PREVIEW_WIDTH/$size[0], $PREVIEW_HEIGHT/$size[1]);
+    if ($srcSize->w>0){
+      $scale = min($previewSize->w/$srcSize->w, $previewSize->h/$srcSize->h);
     }
     if ($scale < 1) {
-      $width = floor($scale*$size[0]);
-      $height = floor($scale*$size[1]);
+      $destSize = new ImageSize(
+            floor($scale*$srcSize->w),
+            floor($scale*$srcSize->h)
+      );
     } else {
-      $width = $size[0];
-      $height = $size[1];
+      $destSize = new ImageSize(
+            $srcSize->w,
+            $srcSize->h
+      );
     }
-    $image_resized = imagecreatetruecolor($width, $height);
-    if ($size[2]==IMAGETYPE_GIF) {
-      $image_orig=imagecreatefromgif($filePath);
-    }
-    if ($size[2]==IMAGETYPE_JPEG) {
-      $image_orig=imagecreatefromjpeg($filePath);
-    }
-    if ($size[2]==IMAGETYPE_PNG) {
-      $image_orig=imagecreatefrompng($filePath);
-    }
+    $image_resized = $pImage->create($destSize);
+    $image_orig = $pImage->create($file);
     //WE NEED NEAREST NEIGHBOR RESIZING, BECAUSE IT DOESN'T ALTER THE COLORS
-    imagecopyresampled($image_resized, $image_orig, 0, 0, 0, 0, $width, $height, $size[0], $size[1]);
-    $im = $image_resized;
-    $imgWidth = imagesx($im);
-    $imgHeight = imagesy($im);
+    imagecopyresampled(
+        $image_resized,
+        $image_orig,
+        0,
+        0,
+        0,
+        0,
+        $destSize->w,
+        $destSize->h,
+        $srcSize->w,
+        $srcSize->h);
 
     // walk the image counting colors
-    for ($y=0; $y < $imgHeight; $y++) {
-      for ($x=0; $x < $imgWidth; $x++) {
-        $index = imagecolorat($im,$x,$y);
-        $Colors = imagecolorsforindex($im,$index);
-        $div = ColorPalette::COLOR_ROUNDING_COEFF;
-        $colorstr='';
-        $hexarray[]=(new BaseColor($Colors['red'],$Colors['green'],$Colors['blue']))->toHex();
-      }
-    }
-    $hexarray=array_count_values($hexarray);
+    $hexarray = [];
+    $pImage->process(
+        $destSize,
+        [$image_resized],
+        function($point, $im) use (&$hexarray){
+            $index = imagecolorat($im,$point->x,$point->y);
+            $Colors = imagecolorsforindex($im,$index);
+            $hexarray[]=(new BaseColor($Colors['red'],$Colors['green'],$Colors['blue']))->toHex();
+        }
+    );
+    $hexarray = array_count_values($hexarray);
     natsort($hexarray);
     $hexarray = array_slice($hexarray,-10,10);
-    $hexarray=array_reverse($hexarray,true);
+    $hexarray = array_reverse($hexarray,true);
     return $hexarray;
   }
 
