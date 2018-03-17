@@ -49,16 +49,21 @@ class BaseColor
 
     function toArray()
     {
-        return array(
-            'r'=>$this->r
-            ,'g'=>$this->g
-            ,'b'=>$this->b
-        );
+        return [ 
+             'r' => $this->r
+            ,'g' => $this->g
+            ,'b' => $this->b
+        ];
     }
 
     function toString()
     {
         return join(',',$this->toArray());
+    }
+
+    public function __tostring()
+    {
+        return $this->toString();
     }
 
     function toRound()

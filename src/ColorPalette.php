@@ -5,6 +5,8 @@ use PMVC\PlugIn\image\ImageFile;
 use PMVC\PlugIn\image\ImageSize;
 use PMVC\PlugIn\image\Coord2D;
 
+use InvalidArgumentException;
+
 /**
  * This class can be used to get the most common colors in an image, or to generate
  * a color palette from a set of images.  It handles a simple local cache of images.
@@ -25,12 +27,26 @@ class ColorPalette {
    * @param $filePath   the path to the local image file
    * @return an array keyed by hex color value, mapping to the frequency of use in the images
    */
-  static public function GenerateFromLocalImage(ImageFile $file) {
+  static public function GenerateFromLocalImage($file) {
     $pImage = \PMVC\plug('image');
+    if (is_string($file) && is_file($file)) {
+        $imageOrig = $pImage->create($file);
+    } else {
+        if ($file instanceof ImageFile) {
+            $imageOrig = $file;
+        } else {
+           throw new InvalidArgumentException(
+            json_encode([
+                '[GenerateFromLocalImage]'=>'input not a ImageFile',
+                'input'=>$file
+             ])
+           );
+        }
+    }
 
     // resize the image for a reasonable amount of colors
     $previewSize = new ImageSize(150, 150);
-    $srcSize = $file->getSize();
+    $srcSize = $imageOrig->getSize();
     $scale=1;
     if ($srcSize->w>0){
       $scale = min($previewSize->w/$srcSize->w, $previewSize->h/$srcSize->h);
@@ -46,12 +62,11 @@ class ColorPalette {
             $srcSize->h
       );
     }
-    $image_resized = $pImage->create($destSize);
-    $image_orig = $pImage->create($file);
+    $imageResized = $pImage->create($destSize);
     //WE NEED NEAREST NEIGHBOR RESIZING, BECAUSE IT DOESN'T ALTER THE COLORS
     imagecopyresampled(
-        $image_resized,
-        $image_orig,
+        $imageResized->toGd(),
+        $imageOrig->toGd(),
         0,
         0,
         0,
@@ -59,13 +74,14 @@ class ColorPalette {
         $destSize->w,
         $destSize->h,
         $srcSize->w,
-        $srcSize->h);
+        $srcSize->h
+    );
 
     // walk the image counting colors
     $hexarray = [];
     $pImage->process(
         $destSize,
-        [$image_resized],
+        [$imageResized->toGd()],
         function($point, $im) use (&$hexarray){
             $index = imagecolorat($im,$point->x,$point->y);
             $Colors = imagecolorsforindex($im,$index);
