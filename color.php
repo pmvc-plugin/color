@@ -23,7 +23,13 @@ class color extends \PMVC\PlugIn
 
     public function fill($oGd, BaseColor $bgColor)
     {
-        imagefill($oGd, 0, 0, $bgColor->toGd($oGd));
+        $pImg = \PMVC\plug('image');
+        imagefill(
+            $pImg->getGd($oGd),
+            0,
+            0,
+            $bgColor->toGd($oGd)
+        );
     }
 
     public function hexToRgb($hex)

@@ -81,8 +81,9 @@ class BaseColor
      */
     function toGd($image)
     {
+        $pImg = \PMVC\plug('image');
         return imagecolorallocate(
-            $image,
+            $pImg->getGd($image),
             $this->r,
             $this->g,
             $this->b
