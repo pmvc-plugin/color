@@ -11,10 +11,10 @@ class BaseColor
 
     function __construct($r = null, $g = null, $b = null, $a = null)
     {
-        $this->r = $r;
-        $this->g = $g;
-        $this->b = $b;
-        $this->a = $a;
+        $this->r = $r ?? 0;
+        $this->g = $g ?? 0;
+        $this->b = $b ?? 0;
+        $this->a = $a ?? 0;
     }
 
     function getClone()
@@ -80,15 +80,26 @@ class BaseColor
     /**
      * @param resource $image gd image resource http://php.net/manual/en/function.imagecreatetruecolor.php
      * @see http://php.net/manual/en/function.imagecolorallocate.php
+     * @see https://www.php.net/manual/en/function.imagecolorallocatealpha.php
      */
-    function toGd($image)
+    function toGd($image, $toAlpha = null)
     {
-        $pImg = \PMVC\plug('image');
-        return imagecolorallocate(
-            $pImg->getGd($image),
-            $this->r,
-            $this->g,
-            $this->b
-        );
+        $oGd = \PMVC\plug('image')->getGd($image);
+        if ($toAlpha) {
+            return imagecolorallocatealpha(
+                $oGd,
+                $this->r,
+                $this->g,
+                $this->b,
+                $this->a
+            );
+        } else {
+            return imagecolorallocate(
+                $oGd,
+                $this->r,
+                $this->g,
+                $this->b
+            );
+        }
     }
 }
