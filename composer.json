@@ -1,18 +1,21 @@
 {
-    "name": "pmvc-plugin/color",
-    "description": "color",
-    "type": "library",
-    "keywords": ["color", "pmvc", "plug-in"],
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Hill",
-            "email": "hill@kimo.com"
-        }
-    ],
-    "require": {
-        "pmvc/pmvc": "*",
-        "pmvc-plugin/image": "*"
-    },
-    "minimum-stability": "dev"
+  "name": "pmvc-plugin/color",
+  "description": "color",
+  "type": "library",
+  "keywords": ["color", "pmvc", "plug-in"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Hill",
+      "email": "hill@kimo.com"
+    }
+  ],
+  "require": {
+    "pmvc/pmvc": "*",
+    "pmvc-plugin/image": "*"
+  },
+  "require-dev": {
+    "pmvc-plugin/unit": "*"
+  },
+  "minimum-stability": "dev"
 }

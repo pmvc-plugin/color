@@ -3,21 +3,23 @@ namespace PMVC\PlugIn\color;
 
 class BaseColor
 {
-    const COLOR_ROUNDING_COEFF = 0x33; 
+    const COLOR_ROUNDING_COEFF = 0x33;
     private $r;
     private $g;
     private $b;
+    private $a;
 
-    function __construct($r=null, $g=null, $b=null)
+    function __construct($r = null, $g = null, $b = null, $a = null)
     {
-       $this->r = $r; 
-       $this->g = $g;
-       $this->b = $b;
+        $this->r = $r;
+        $this->g = $g;
+        $this->b = $b;
+        $this->a = $a;
     }
 
     function getClone()
     {
-        return clone($this);
+        return clone $this;
     }
 
     function decrease(BaseColor $other)
@@ -40,28 +42,28 @@ class BaseColor
 
     function toHex()
     {
-        $colorstr='';
-        $colorstr.=str_pad(dechex($this->r), 2, 0, STR_PAD_LEFT);
-        $colorstr.=str_pad(dechex($this->g), 2, 0, STR_PAD_LEFT);
-        $colorstr.=str_pad(dechex($this->b), 2, 0, STR_PAD_LEFT);
+        $colorstr = '';
+        $colorstr .= str_pad(dechex($this->r), 2, 0, STR_PAD_LEFT);
+        $colorstr .= str_pad(dechex($this->g), 2, 0, STR_PAD_LEFT);
+        $colorstr .= str_pad(dechex($this->b), 2, 0, STR_PAD_LEFT);
         return $colorstr;
     }
 
     function toArray()
     {
-        return [ 
-             'r' => $this->r
-            ,'g' => $this->g
-            ,'b' => $this->b
+        return [
+            'r' => $this->r,
+            'g' => $this->g,
+            'b' => $this->b,
         ];
     }
 
     function toString()
     {
-        return join(',',$this->toArray());
+        return join(',', $this->toArray());
     }
 
-    public function __tostring()
+    public function __toString()
     {
         return $this->toString();
     }
@@ -69,9 +71,9 @@ class BaseColor
     function toRound()
     {
         $div = self::COLOR_ROUNDING_COEFF;
-        $this->r = round(round(($this->r / $div)) * $div);
-        $this->g = round(round(($this->g / $div)) * $div);
-        $this->b = round(round(($this->b / $div)) * $div);
+        $this->r = round(round($this->r / $div) * $div);
+        $this->g = round(round($this->g / $div) * $div);
+        $this->b = round(round($this->b / $div) * $div);
         return $this;
     }
 
@@ -87,6 +89,6 @@ class BaseColor
             $this->r,
             $this->g,
             $this->b
-        ); 
+        );
     }
 }
