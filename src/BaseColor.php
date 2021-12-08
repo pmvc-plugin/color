@@ -4,17 +4,17 @@ namespace PMVC\PlugIn\color;
 class BaseColor
 {
     const COLOR_ROUNDING_COEFF = 0x33;
-    private $r;
-    private $g;
-    private $b;
-    private $a;
+    public $r;
+    public $g;
+    public $b;
+    public $a;
 
     function __construct($r = null, $g = null, $b = null, $a = null)
     {
-        $this->r = $r ?? 0;
-        $this->g = $g ?? 0;
-        $this->b = $b ?? 0;
-        $this->a = $a ?? 0;
+        $this->r = $r ? $r : 0;
+        $this->g = $g ? $g : 0;
+        $this->b = $b ? $b : 0;
+        $this->a = $a ? $a : 0;
     }
 
     function getClone()
@@ -58,7 +58,7 @@ class BaseColor
         ];
     }
 
-    function toString()
+    protected function toString()
     {
         return join(',', $this->toArray());
     }
@@ -94,12 +94,7 @@ class BaseColor
                 $this->a
             );
         } else {
-            return imagecolorallocate(
-                $oGd,
-                $this->r,
-                $this->g,
-                $this->b
-            );
+            return imagecolorallocate($oGd, $this->r, $this->g, $this->b);
         }
     }
 }
